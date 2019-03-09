@@ -9,5 +9,8 @@ def save_tickers(n):
    headers=headers)
    return r
 
+def get_tickers():
+    pass
+
 if __name__=="__main__":
     print (save_tickers(0).text)
