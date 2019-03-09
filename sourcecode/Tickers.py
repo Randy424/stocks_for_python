@@ -81,4 +81,4 @@ def enablePrint():
 
 
 if __name__=="__main__":
-   save_tickers(10)
+  pass
