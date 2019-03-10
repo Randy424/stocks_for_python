@@ -9,12 +9,20 @@ import sys
 
 def save_tickers(n):
    """ 
-   Sends get request to url, parses html and return 'n' tickers 
+   Sends get request to url, calls get_tickers to parses html, 
+   and return 'n' tickers. 
+   If tickers.txt does not already exist, function creates
+   it; otherwise it is appended to. 
+   Appends tickers, one per line. 
+   Returns the get request text body. 
    """
+
    headers = {'Accept-Encoding': 'identity'}
    r = requests.get("http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download",
    headers=headers)
+
    ticker_list = get_tickers(r, n)
+
    if(len(ticker_list) > 0):
       if (os.path.isfile("./tickers.txt")):
          f = open("./tickers.txt", "a+")
@@ -31,13 +39,16 @@ def save_tickers(n):
 
 def get_tickers(html, n):
    """
-   Parses html and returns list of 'n' tickers
+   Parses html from request.get() output 
+   returns list of 'n' many tickers
    """
    #isolating ticker from url
    results = re.findall(r'/symbol/.*" ', html.text)
    ticker_list = []
+   #if n > limit, returns empty list
    if n > len(results):
       return ticker_list
+   #parsing text, storing ticker
    else:
       for i in range(n):
          temp = results[i].split("\" ")
@@ -49,6 +60,7 @@ def get_tickers(html, n):
 def confirm_ticker(t):
    """
    Uses iex.Stock().price to check if a ticker has a listed price
+
    """
    try:
       #blocking std output from Stock().price()
