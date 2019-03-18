@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import json
 import pandas as pd 
 import requests
@@ -31,7 +33,7 @@ def save_tickers(n):
    
       for i in ticker_list:
          if(confirm_ticker):
-            f.write( f"{i} \n")
+            f.write( f"{i.upper()} \n")
       f.close()
    else: 
       print("requesting too many tickers, n =< 50")
@@ -93,4 +95,6 @@ def enablePrint():
 
 
 if __name__=="__main__":
-  pass
+   inpt = int(sys.argv[1])
+   save_tickers(inpt)
+
