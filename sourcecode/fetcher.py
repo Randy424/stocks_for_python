@@ -56,11 +56,15 @@ def write_update(ticker):
 
     data = pd.read_csv(sys.argv[3], usecols=header) 
 
-    #stay in while loop until following minute
+    #sleep program until following minute
     for index, row in data.iterrows():
         if row['Time'] == get_time() and row['Ticker'] == ticker:
-            while row['Time'] == get_time():
-                pass
+            now = datetime.datetime.now()
+            curseconds = now.second
+            time.sleep(60-curseconds)
+            #while loop to wait till next minute
+            #while row['Time'] == get_time():
+            #    pass
 
     df_x = pd.DataFrame([[get_time(),book['symbol'],book['latestPrice'],book['latestVolume'],
         book['close'], book['open'],book['low'], book['high']]], columns=header)
