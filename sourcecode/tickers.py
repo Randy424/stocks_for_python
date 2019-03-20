@@ -8,10 +8,12 @@ from iex import Stock
 import os
 import sys
 
+#sys.argv[1] = size
+#sys.argv[2] = file name
 
 def save_tickers(n):
    """ 
-   Sends get request to url, calls get_tickers to parses html, 
+   Sends get request to url, calls get_tickers to #parses html, 
    and return 'n' tickers. 
    If tickers.txt does not already exist, function creates
    it; otherwise it is appended to. 
@@ -26,10 +28,10 @@ def save_tickers(n):
    ticker_list = get_tickers(r, n)
 
    if(len(ticker_list) > 0):
-      if (os.path.isfile("./tickers.txt")):
-         f = open("./tickers.txt", "a+")
+      if (os.path.isfile(sys.argv[2])):
+         f = open(sys.argv[2], "a+")
       else:
-         f = open("./tickers.txt", "w+")
+         f = open(sys.argv[2], "w+")
    
       for i in ticker_list:
          if(confirm_ticker):

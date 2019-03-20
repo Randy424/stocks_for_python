@@ -18,25 +18,25 @@ company = {}
 #keeps track of number of rows
 numrows = 0
 
-"""
-Opens a csv file and reads its data
-Stores all the column names in a list called fields
-Creates a dictionary where the keys are the symbol names
-and each row of values associated with said symbol
-are appended as a list of values
-This allows multiple rows to be assigned to the same
-key/symbol
-"""
 def read_csv_file():
+    """
+    Opens a csv file and reads its data
+    Stores all the column names in a list called fields
+    Creates a dictionary where the keys are the symbol names
+    and each row of values associated with said symbol
+    are appended as a list of values
+    This allows multiple rows to be assigned to the same
+    key/symbol
+    """
     global numrows
     with open(sys.argv[2],'r') as csvfile:
         csvreader = csv.reader(csvfile)
-        
+
         #Gets the field names (first row) and stores them
         for row in csvreader:
             fields.append(row)
             break
-        
+
         #Gets and stores data from the following rows
         for row in csvreader:
             if row[1] not in company:
@@ -45,13 +45,13 @@ def read_csv_file():
                 company[row[1]].append(row)
             numrows+=1
 
-"""
-Indexes into the dictionary based on the symbols name stored in sys.argv[3]
-Searches the rows associated with the symbol to find the time specified
-If verbose is set to true, output the number of rows, columns, and all the
-field names
-"""
 def find_symbol(verbose):
+    """
+    Indexes into the dictionary based on the symbols name stored in sys.argv[3]
+    Searches the rows associated with the symbol to find the time specified
+    If verbose is set to true, output the number of rows, columns, and all the
+    field names
+    """
     if sys.argv[3] in company:
         for i in range(len(company[sys.argv[3]])):
             if company[sys.argv[3]][i][0] == sys.argv[4]:
