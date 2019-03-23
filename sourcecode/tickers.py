@@ -32,7 +32,7 @@ def save_tickers(n):
          f = open("./tickers.txt", "w+")
    
       for i in ticker_list:
-         if(confirm_ticker):
+         if(confirm_ticker(i)):
             f.write( f"{i.upper()} \n")
       f.close()
    else: 
@@ -76,9 +76,9 @@ def confirm_ticker(t):
 
       return True
    except:
-    #print("Unexpected error:", sys.exc_info()[0])
-    #print(f"Ticker: {t} not found")
-    return False
+      #print("Unexpected error:", sys.exc_info()[0])
+      #print(f"Ticker: {t} not found")
+      return False
 
 
 def blockPrint():
