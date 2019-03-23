@@ -34,7 +34,7 @@ def save_tickers(n):
          f = open(sys.argv[2], "w+")
    
       for i in ticker_list:
-         if(confirm_ticker):
+         if confirm_ticker(i):
             f.write( f"{i.upper()} \n")
       f.close()
    else: 
