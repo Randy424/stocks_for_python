@@ -12,49 +12,38 @@ def predictor(ticker,infofile,graphfile,col,t):
     time_data and col_data respectively
     """
     start_time = datetime.datetime.now()
-    hh = start_time.hour
-    mm = start_time.minute
-    print(start_time)
-    print(str(hh) + "\t" + str(mm))
     time_data = []
     col_data = []
+    test_time = []
     predictions = []
 
+    #get values from csv file
     reader = csv.DictReader(open(infofile,"r"), delimiter = ',')
     for row in reader:
         if row["Ticker"] == ticker:
             time_data.append(row["Time"])
             col_data.append(row[col])
 
+    #sets up linear regression model
     #time_data_encoded = LabelEncoder().fit_transform(time_data)
     #model = linear_model.LinearRegression()
     #model.fit(time_data_encoded,col_data)
-    #for i in range(t):
-    #    mm+=1
-    #    if mm==60:
-    #        hh+=1
-    #        mm=0
-    #    if hh==24:
-    #        hh=0
-    #        mm=0
-    #    test_time = str(hh)+":"+str(mm)
-    #    predictions.append(model.predict(test_time))
+    #model.fit(time_data,col_data)
 
-    #testing graph purposes!! This section should get removed
-    test_time = []
-    test_result = []
+    #goes through prediction loop 
     for i in range(t):
-        mm+=1
-        test_time.append(str(hh)+":"+str(mm))
-        test_result.append(mm*2)
+        currentDT = start_time.replace(minute=start_time.minute+(i+1))
+        test_time.append(currentDT.strftime('%H:%M'))
+        #predictions.append(model.predict(test_time))
+        predictions.append(col_data[0])
 
     #output graph with historical data and predicted data. Color seperated
-    show_graph(time_data,col_data,test_time,test_result)
+    show_graph(time_data,col_data,test_time,predictions)
 
 def show_graph(time,results,pred_time,pred_results):
     """
-    Displays graph based on x and y input. Will need to add a "second" Y to
-    show the historical data
+    Displays graph based on time and col historical data as well as the
+    predicted results from the linear regression model
     """
     #plt.scatter(x,y)
     #plt.show()
