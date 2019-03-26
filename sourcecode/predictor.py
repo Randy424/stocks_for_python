@@ -46,7 +46,7 @@ def predictor(ticker,infofile,graphfile,col,t):
     col_data_encoded = np.array(col_data).reshape(-1,1)
 
     model.fit(time_data_encoded,col_data)
-    start_time = datetime.datetime.strptime(time_data[-1], '%I:%M')
+    start_time = datetime.datetime.strptime(time_data[-1], '%H:%M')
     
     #changes from taj
     #model.fit(time_data_encoded,col_data_encoded)
