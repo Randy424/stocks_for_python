@@ -36,13 +36,27 @@ def predictor(ticker,infofile,graphfile,col,t):
     print("classes: ", le.classes_)
     print("encoded time data: ", time_data_encoded)
     print("encoded col data: ",col_data_encoded)
+    
+    #changes from taj
+    #model = linear_model.LinearRegression()
+    #time_data_encoded = LabelEncoder().fit_transform(time_data)
+    #end
 
     time_data_encoded = np.array(time_data_encoded).reshape(-1,1)
-    col_data_encoded = np.array(col_data_encoded).reshape(-1,1)
+    col_data_encoded = np.array(col_data).reshape(-1,1)
 
     model.fit(time_data_encoded,col_data)
     start_time = datetime.datetime.strptime(time_data[-1], '%I:%M')
+    
+    #changes from taj
+    #model.fit(time_data_encoded,col_data_encoded)
+
+    #KEEP THIS PART FOR SURE
+    #Your picture saved values as 00:43 etc instead of 12:43! 
+    #end
+
     #finds times to evaluate
+    #Use this for time values
     for i in range(t):
         currentDT = start_time + datetime.timedelta(seconds=60*(i+1))
         print (currentDT)
@@ -61,6 +75,7 @@ def predictor(ticker,infofile,graphfile,col,t):
     #        predictions.append(model.predict(time))
 
     #output graph with historical data and predicted data. Color seperated
+    #test_graph(time_data,col_data,test_time,predictions)
     save_graph(time_data,col_data,test_time,predictions)
 
 def save_graph(time,results,pred_time,pred_results):
@@ -80,10 +95,30 @@ def save_graph(time,results,pred_time,pred_results):
     ax.plot(time, converted_results,'r', pred_time, converted_predictions, 'b')
     plt.xlabel("Time")
     plt.ylabel(sys.argv[4])
+    
+    #graph = plt.figure()#(figsize=(4,7),dpi=100)
+    #ax = graph.add_subplot(1,1,1)
+    #ax.plot(time,results,'r',pred_time,pred_results,'b')
 
+    #KEEP THE FOLLOWING
+    #Set label and increase font
+    graph.suptitle("Predictions for " + sys.argv[1],fontsize=40)
+    plt.xlabel("Time", fontsize=20)
+    plt.ylabel(sys.argv[4], fontsize=20)
+
+    #Rotates labels on graph
+    alltimes = time + pred_time
+    allresults = results + list(pred_results)
+    plt.xticks(alltimes, [str(i) for i in alltimes], rotation=45)
+    #increase graph size
+    plt.gcf().set_size_inches(18.5,10)
     #saves graph
     plt.savefig(sys.argv[3]+".png")
 
-
+#THIS IS TRASH
+def test_graph(x,y,x2,y2):
+    plt.plot(x,y)
+    plt.plot(x2,y2)
+    plt.show()
 if __name__ == "__main__":
     predictor(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],int(sys.argv[5]))
