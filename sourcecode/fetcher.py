@@ -22,6 +22,7 @@ def gettickers_callupdate(time_lim):
     """
 
     t_end = time.time() + time_lim
+    print(time.time()+140)
     while time.time() < t_end:
         f = open(sys.argv[2], 'r')
     
