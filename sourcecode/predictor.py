@@ -43,14 +43,21 @@ def predictor(ticker,infofile,graphfile,col,t):
     #end
 
     time_data_encoded = np.array(time_data_encoded).reshape(-1,1)
-    col_data_encoded = np.array(col_data_encoded).reshape(-1,1)
+    #col_data_encoded = np.array(col_data_encoded).reshape(-1,1)
 
-    model.fit(time_data_encoded,col_data)
+    #building time delta for training regression model
+    time_data_seconds = [datetime.datetime.strptime(j, '%H:%M') for j in time_data]
+    time_data_seconds = [datetime.timedelta(hours=x.hour, minutes=x.minute).seconds for x in time_data_seconds] 
+    time_data_seconds = np.array(time_data_seconds).reshape(-1,1)
+
+
+    model.fit(time_data_seconds,col_data)
     start_time = datetime.datetime.strptime(time_data[-1], '%H:%M')
     
     #changes from taj
     #model.fit(time_data_encoded,col_data_encoded)
 
+    
     #KEEP THIS PART FOR SURE
     #Your picture saved values as 00:43 etc instead of 12:43! 
     #end
@@ -65,8 +72,17 @@ def predictor(ticker,infofile,graphfile,col,t):
     #goes through prediction loop
     test_time_encoded = LabelEncoder().fit_transform(test_time)
     test_time_encoded = np.array(test_time_encoded).reshape(t,1)
-    print("test time encoded", test_time_encoded)
-    predictions = model.predict(test_time_encoded)
+
+    #building time delta for testing regression model
+    test_time_seconds = [datetime.datetime.strptime(j, '%H:%M') for j in test_time]
+    test_time_seconds = [datetime.timedelta(hours=x.hour, minutes=x.minute).seconds for x in test_time_seconds] 
+    test_time_seconds = np.array(test_time_seconds).reshape(t,1)
+    
+    #print("time test sec", test_time_seconds[0].seconds)
+
+    #print("test time encoded", test_time_encoded)
+
+    predictions = model.predict(test_time_seconds)
     print("predictions: ", predictions)
     #print(test_time)
     #print(test_time_encoded)
