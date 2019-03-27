@@ -58,9 +58,10 @@ def find_symbol(verbose):
                 for val in range(len(fields[0])):
                     print(f"{fields[0][val]}: {company[sys.argv[3]][i][val]}")
                 break
-    if verbose == "True":
-        print(f"Number of rows: {numrows}")
-        print(f"Number of columns: {len(fields)}")
+
+    if sys.argv[1] == "-verbose" or sys.argv[1] == "-v":
+        print(f"Number of rows: {numrows} (not counting row of labels)")
+        print(f"Number of columns: {len(fields[0])}")
         print(' '.join(field for field in fields[0]))
 
 if __name__ == "__main__":
