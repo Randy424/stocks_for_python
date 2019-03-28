@@ -52,7 +52,7 @@ def write_update(ticker):
     header=['Time', 'Ticker', 'latestPrice',
     'latestVolume', 'Close', 'Open', 'low', 'high']
 
-    book = get_book(ticker)
+    #book = get_book(ticker)
 
     data = pd.read_csv(sys.argv[3], usecols=header)
 
@@ -67,6 +67,7 @@ def write_update(ticker):
             #    pass
             return
 
+    book = get_book(ticker)
     df_x = pd.DataFrame([[get_time(),book['symbol'],book['latestPrice'],book['latestVolume'],
         book['close'], book['open'],book['low'], book['high']]], columns=header)
     data = data.append(df_x)
