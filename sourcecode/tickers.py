@@ -32,27 +32,39 @@ def save_tickers(n):
          f = open(sys.argv[2], "a+")
       else:
          f = open(sys.argv[2], "w+")
-   
+
       for i in ticker_list:
          if confirm_ticker(i):
             f.write( f"{i.upper()} \n")
       f.close()
-   else: 
-      print("requesting too many tickers, n =< 50")
+   else:
+      print("requesting too many tickers, n =< 150")
    return r
 
 def get_tickers(html, n):
    """
-   Parses html from request.get() output 
+   Parses html from request.get() output
    returns list of 'n' many tickers
    """
    #isolating ticker from url
    results = re.findall(r'/symbol/.*" ', html.text)
    ticker_list = []
+
+   priorurl = html
+   while n>len(results):
+         nexturl = re.findall(r"https://.*id=\Wmain_content_lb_NextPage",priorurl.text)
+         nurl_list = nexturl[0].split()
+         nextpage = nurl_list[len(nurl_list)-2]
+         nextpage = re.findall(r'https://.*[^"]',nextpage)
+         nexturl = requests.get(nextpage[0])
+         priorurl=nexturl
+         results+=re.findall(r'/symbol/.*" ', nexturl.text)
+
    #if n > limit, returns empty list
    if n > len(results):
       return ticker_list
-   #parsing text, storing ticker
+
+   #parsing text, storing possible tickers
    else:
       for i in range(n):
          temp = results[i].split("\" ")

@@ -22,10 +22,9 @@ def gettickers_callupdate(time_lim):
     """
 
     t_end = time.time() + time_lim
-    print(time.time()+140)
     while time.time() < t_end:
         f = open(sys.argv[2], 'r')
-    
+
         header=['Time', 'Ticker', 'latestPrice',
         'latestVolume', 'Close', 'Open', 'low', 'high']
 
@@ -55,17 +54,18 @@ def write_update(ticker):
 
     book = get_book(ticker)
 
-    data = pd.read_csv(sys.argv[3], usecols=header) 
+    data = pd.read_csv(sys.argv[3], usecols=header)
 
     #sleep program until following minute
     for index, row in data.iterrows():
         if row['Time'] == get_time() and row['Ticker'] == ticker:
-            now = datetime.datetime.now()
-            curseconds = now.second
-            time.sleep(60-curseconds)
+            #now = datetime.datetime.now()
+            #curseconds = now.second
+            #time.sleep(60-curseconds)
             #while loop to wait till next minute
             #while row['Time'] == get_time():
             #    pass
+            return
 
     df_x = pd.DataFrame([[get_time(),book['symbol'],book['latestPrice'],book['latestVolume'],
         book['close'], book['open'],book['low'], book['high']]], columns=header)
@@ -83,7 +83,7 @@ def get_time():
 #returns stock information in the form of a dicitonary
 def get_book(ticker):
     book = Stock(ticker).quote()
-    
+
     #print(book)
     return book
 
@@ -92,7 +92,7 @@ def test_reader():
     reader = csv.DictReader(open(sys.argv[3], "r"), delimiter=',')
 
     for row in reader:
-        print(row)    
+        print(row)
 
 if __name__ == '__main__':
     gettickers_callupdate(int(sys.argv[1]))
