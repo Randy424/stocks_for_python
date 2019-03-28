@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sys
 import csv
 import numpy as np
@@ -5,6 +7,9 @@ import matplotlib.pyplot as plt
 from sklearn import linear_model,model_selection
 from sklearn.preprocessing import LabelEncoder, Normalizer
 import datetime
+
+"""
+"""
 
 def read_csv(infofile, ticker, col):
     """
