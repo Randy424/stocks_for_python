@@ -45,13 +45,14 @@ def get_tickers(html, n):
    Parses html from request.get() output
    returns list of 'n' many tickers
    """
+   ticker_list = []
    #if n > limit, returns empty list
    if n > 150:
       return ticker_list
 
    #isolating ticker from url
    results = re.findall(r'/symbol/.*" ', html.text)
-   ticker_list = []
+   
 
    priorurl = html
    while len(ticker_list)<n:
