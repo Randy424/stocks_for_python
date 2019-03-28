@@ -9,6 +9,7 @@ from iex import Stock
 #sys.argv[1] = time limit
 #sys.argv[2] = ticker file
 #sys.argv[3] = csv info file
+last_ticker_values = {}
 
 def gettickers_callupdate(time_lim):
     """
@@ -20,9 +21,9 @@ def gettickers_callupdate(time_lim):
     time_lim - int
 
     """
-
     t_end = time.time() + time_lim
     while time.time() < t_end:
+        iter_start = datetime.datetime.now()
         f = open(sys.argv[2], 'r')
 
         header=['Time', 'Ticker', 'latestPrice',
@@ -34,9 +35,15 @@ def gettickers_callupdate(time_lim):
             writer.writeheader()
             f_info.close()
 
+        #Enter file and grab tickers one by one to update them
         for l in f:
             l = l.strip()
             write_update(l)
+
+        #sleeps the program until the current minute ends
+        now = datetime.datetime.now()
+        if iter_start.hour == now.hour and iter_start.minute == now.minute:
+            time.sleep(60-now.second)
 
 def write_update(ticker):
     """
@@ -48,44 +55,43 @@ def write_update(ticker):
     args: ticker - string
 
     """
-
+    #print(last_ticker_values)
     header=['Time', 'Ticker', 'latestPrice',
     'latestVolume', 'Close', 'Open', 'low', 'high']
 
-    #book = get_book(ticker)
-
     data = pd.read_csv(sys.argv[3], usecols=header)
 
-    #sleep program until following minute
-    for index, row in data.iterrows():
-        if row['Time'] == get_time() and row['Ticker'] == ticker:
-            #now = datetime.datetime.now()
-            #curseconds = now.second
-            #time.sleep(60-curseconds)
-            #while loop to wait till next minute
-            #while row['Time'] == get_time():
-            #    pass
+    #most recent ticker time is stored in dictionary for faster checking
+    if ticker in last_ticker_values:
+        if last_ticker_values[ticker] == get_time():
             return
 
+    #Grabs stock information for a ticker and adds it to the dataframe
     book = get_book(ticker)
     df_x = pd.DataFrame([[get_time(),book['symbol'],book['latestPrice'],book['latestVolume'],
         book['close'], book['open'],book['low'], book['high']]], columns=header)
     data = data.append(df_x)
 
+    #updates ticker value in its dictionary
+    last_ticker_values[ticker] = get_time()
+
     data.to_csv(sys.argv[3], index = False)
-    #print(data)
 
 
-#returns time in needed format for csv 
+
 def get_time():
+    """
+    returns time in needed format for csv
+    """
     currentDT = datetime.datetime.now()
     return currentDT.strftime('%H:%M')
 
-#returns stock information in the form of a dicitonary
 def get_book(ticker):
+    """
+    returns stock information in the form of a dicitonary
+    """
     book = Stock(ticker).quote()
 
-    #print(book)
     return book
 
 #for testing, we can get rid of this later
@@ -97,3 +103,4 @@ def test_reader():
 
 if __name__ == '__main__':
     gettickers_callupdate(int(sys.argv[1]))
+
