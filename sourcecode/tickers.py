@@ -25,17 +25,16 @@ def save_tickers(n):
    r = requests.get("http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download",
    headers=headers)
 
-   ticker_list = get_tickers(r, n)
+   valid_ticker_list = get_tickers(r, n)
 
-   if(len(ticker_list) > 0):
+   if(len(valid_ticker_list) > 0):
       if (os.path.isfile(sys.argv[2])):
          f = open(sys.argv[2], "a+")
       else:
          f = open(sys.argv[2], "w+")
 
-      for i in ticker_list:
-         if confirm_ticker(i):
-            f.write( f"{i.upper()} \n")
+      for i in valid_ticker_list:
+          f.write( f"{i.upper()} \n")
       f.close()
    else:
       print("requesting too many tickers, n =< 150")
@@ -46,31 +45,37 @@ def get_tickers(html, n):
    Parses html from request.get() output
    returns list of 'n' many tickers
    """
+   #if n > limit, returns empty list
+   if n > 150:
+      return ticker_list
+
    #isolating ticker from url
    results = re.findall(r'/symbol/.*" ', html.text)
    ticker_list = []
 
    priorurl = html
-   while n>len(results):
-         nexturl = re.findall(r"https://.*id=\Wmain_content_lb_NextPage",priorurl.text)
-         nurl_list = nexturl[0].split()
-         nextpage = nurl_list[len(nurl_list)-2]
-         nextpage = re.findall(r'https://.*[^"]',nextpage)
-         nexturl = requests.get(nextpage[0])
-         priorurl=nexturl
-         results+=re.findall(r'/symbol/.*" ', nexturl.text)
+   while len(ticker_list)<n:
+       for i in results:
+           temp = i.split("\"")
+           splitr = temp[0].split('/')
+           ticker = splitr[2]
+           if confirm_ticker(ticker):
+               ticker_list.append(ticker)
+           if len(ticker_list) == n:
+               break
+       if len(ticker_list) == n:
+           break
+       newstart = len(results)
+       nexturl = re.findall(r"https://.*id=\Wmain_content_lb_NextPage",priorurl.text)
+       nurl_list = nexturl[0].split()
+       nextpage = nurl_list[len(nurl_list)-2]
+       nextpage = re.findall(r'https://.*[^"]',nextpage)
+       nexturl = requests.get(nextpage[0])
+       priorurl=nexturl
+       results+=re.findall(r'/symbol/.*" ', nexturl.text)
+       results = results[newstart::]
 
-   #if n > limit, returns empty list
-   if n > len(results):
-      return ticker_list
-
-   #parsing text, storing possible tickers
-   else:
-      for i in range(n):
-         temp = results[i].split("\" ")
-         splitr = temp[0].split('/')
-         ticker = splitr[2]
-         ticker_list.append(ticker)
+   print(len(ticker_list))
    return ticker_list
 
 def confirm_ticker(t):
