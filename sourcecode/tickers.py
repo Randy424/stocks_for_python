@@ -26,7 +26,8 @@ def save_tickers(n):
    headers=headers)
 
    valid_ticker_list = get_tickers(r, n)
-
+   #if the length of valid tickers is greater than 0, move the list into
+   #a file
    if(len(valid_ticker_list) > 0):
       if (os.path.isfile(sys.argv[2])):
          f = open(sys.argv[2], "a+")
@@ -43,7 +44,9 @@ def save_tickers(n):
 def get_tickers(html, n):
    """
    Parses html from request.get() output
-   returns list of 'n' many tickers
+   returns list of 'n' many tickers. Returns
+   an empty list if the requested number of tickers
+   is greater than 150
    """
    ticker_list = []
    #if n > limit, returns empty list
@@ -52,8 +55,8 @@ def get_tickers(html, n):
 
    #isolating ticker from url
    results = re.findall(r'/symbol/.*" ', html.text)
-   
 
+   #check tickers loop and grab more tickers if needed
    priorurl = html
    while len(ticker_list)<n:
        for i in results:
@@ -64,19 +67,20 @@ def get_tickers(html, n):
                ticker_list.append(ticker)
            if len(ticker_list) == n:
                break
+       #If found all valid tickers, break
        if len(ticker_list) == n:
            break
-       newstart = len(results)
-       nexturl = re.findall(r"https://.*id=\Wmain_content_lb_NextPage",priorurl.text)
-       nurl_list = nexturl[0].split()
-       nextpage = nurl_list[len(nurl_list)-2]
-       nextpage = re.findall(r'https://.*[^"]',nextpage)
-       nexturl = requests.get(nextpage[0])
-       priorurl=nexturl
-       results+=re.findall(r'/symbol/.*" ', nexturl.text)
-       results = results[newstart::]
-
-   print(len(ticker_list))
+       #Else, grab the next page of tickers from nasdaq
+       else:
+           newstart = len(results)
+           nexturl = re.findall(r"https://.*id=\Wmain_content_lb_NextPage",priorurl.text)
+           nurl_list = nexturl[0].split()
+           nextpage = nurl_list[len(nurl_list)-2]
+           nextpage = re.findall(r'https://.*[^"]',nextpage)
+           nexturl = requests.get(nextpage[0])
+           priorurl=nexturl
+           results+=re.findall(r'/symbol/.*" ', nexturl.text)
+           results = results[newstart::]
    return ticker_list
 
 def confirm_ticker(t):
