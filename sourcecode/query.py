@@ -1,5 +1,6 @@
 import sys
 import csv
+import argparse
 
 #EXAMPLE OF HOW TO RUN
 #python3 query.py True test.csv AAPL 00:00 
@@ -18,7 +19,7 @@ company = {}
 #keeps track of number of rows
 numrows = 0
 
-def read_csv_file():
+def read_csv_file(filename):
     """
     Opens a csv file and reads its data
     Stores all the column names in a list called fields
@@ -29,7 +30,7 @@ def read_csv_file():
     key/symbol
     """
     global numrows
-    with open(sys.argv[2],'r') as csvfile:
+    with open(filename,'r') as csvfile:
         csvreader = csv.reader(csvfile)
 
         #Gets the field names (first row) and stores them
@@ -45,25 +46,55 @@ def read_csv_file():
                 company[row[1]].append(row)
             numrows+=1
 
-def find_symbol(verbose):
+def find_symbol(ticker, verbose, time):
     """
     Indexes into the dictionary based on the symbols name stored in sys.argv[3]
     Searches the rows associated with the symbol to find the time specified
     If verbose is set to true, output the number of rows, columns, and all the
     field names
     """
-    if sys.argv[3] in company:
-        for i in range(len(company[sys.argv[3]])):
-            if company[sys.argv[3]][i][0] == sys.argv[4]:
+    if ticker in company:
+        for i in range(len(company[ticker])):
+            if company[ticker][i][0] == time:
                 for val in range(len(fields[0])):
-                    print(f"{fields[0][val]}: {company[sys.argv[3]][i][val]}")
+                    print(f"{fields[0][val]}: {company[ticker][i][val]}")
                 break
 
-    if sys.argv[1] == "-verbose" or sys.argv[1] == "-v":
+    if verbose:
         print(f"Number of rows: {numrows} (not counting row of labels)")
         print(f"Number of columns: {len(fields[0])}")
         print(' '.join(field for field in fields[0]))
 
+
+def parse_args(args):
+    """ Configure parsing of command line arguments """
+    parser = argparse.ArgumentParser(description=(f"Prints details corresponding to ticker"
+        " and specific time"))
+    parser.add_argument("-verbose", "-v", nargs='?', default=None, type=bool, 
+        help="when True, the number of rows and number of columns in the information"
+        " file will be printed out as well as the names of the columns.")
+   
+    parser.add_argument("-file", nargs='?', default=None, type=str, 
+        help="information filename")
+    parser.add_argument("-ticker", nargs='?', default=None, type=str, 
+        help="ticker name")
+    parser.add_argument("-time", nargs='?', default=None, type=str, 
+        help="requested time")
+
+    args = parser.parse_args(args)
+    return args    
+
+
 if __name__ == "__main__":
-    read_csv_file()
-    find_symbol(sys.argv[1])
+    args = parse_args(sys.argv[1:])
+    verbose = args.verbose
+    info_file = args.info_filename
+    ticker = args.ticker
+    time = args.time
+   
+    read_csv_file(info_file)
+    find_symbol(ticker, verbose, time)
+    
+   
+
+
