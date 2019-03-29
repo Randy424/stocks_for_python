@@ -59,8 +59,7 @@ def find_symbol(ticker, verbose, time):
                 for val in range(len(fields[0])):
                     print(f"{fields[0][val]}: {company[ticker][i][val]}")
                 break
-
-    if verbose:
+    if verbose == "True":
         print(f"Number of rows: {numrows} (not counting row of labels)")
         print(f"Number of columns: {len(fields[0])}")
         print(' '.join(field for field in fields[0]))
@@ -70,7 +69,7 @@ def parse_args(args):
     """ Configure parsing of command line arguments """
     parser = argparse.ArgumentParser(description=(f"Prints details corresponding to ticker"
         " and specific time"))
-    parser.add_argument("-verbose", "-v", nargs='?', default=None, type=bool, 
+    parser.add_argument("-verbose", "-v", nargs='?', default=None, type=str, 
         help="when True, the number of rows and number of columns in the information"
         " file will be printed out as well as the names of the columns.")
    
@@ -88,7 +87,7 @@ def parse_args(args):
 if __name__ == "__main__":
     args = parse_args(sys.argv[1:])
     verbose = args.verbose
-    info_file = args.info_filename
+    info_file = args.file
     ticker = args.ticker
     time = args.time
    

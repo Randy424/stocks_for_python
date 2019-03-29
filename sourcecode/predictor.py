@@ -8,9 +8,6 @@ from sklearn import linear_model,model_selection
 from sklearn.preprocessing import LabelEncoder, Normalizer
 import datetime
 
-"""
-"""
-
 def read_csv(infofile, ticker, col):
     """
     Read values from csv
@@ -112,7 +109,7 @@ def save_graph(time,results,pred_time,pred_results):
     #increase graph size
     plt.gcf().set_size_inches(18.5,10)
     #saves graph
-    plt.savefig(sys.argv[3]+".png")
+    plt.savefig(sys.argv[3])
 
 
 if __name__ == "__main__":
